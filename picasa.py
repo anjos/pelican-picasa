@@ -3,7 +3,7 @@
 import gdata.photos.service
 from pelican import signals
 
-def process_album():
+def process_album(albumname):
     username = "dan@zem.org.uk" 
     albumname = "Gentse Feesten 2013"
     gd_client = gdata.photos.service.PhotosService()
@@ -22,13 +22,26 @@ def process_album():
     photos = gd_client.GetFeed(
             '/data/feed/api/user/%s/albumid/%s?kind=photo&imgmax=1024' % (
             username, target.gphoto_id.text))
+
+    galleryimages = []
     for photo in photos.entry:
-        print 'Photo title:', photo.title.text, photo.content.src
+        image = {}
+        image['thumb'] = photo.media.thumbnail[1].url
+        image['image'] = photo.content.src
+#        print 'Photo title:', photo.title.text, photo.content.src
+        galleryimages.append(image)
+        
+    return galleryimages
+        
 
-def add_picasa_article:
-    pass
+def add_picasa_article(generator):
+    for article in generator.articles:
+        if 'picasa' in article.metadata.keys():
+            albumname = article.metadata.get('picasa')
+            article.album = albumname
+            article.galleryimages = process_album(albumname)
 
-def add_picasa_page:
+def add_picasa_page(generator):
     pass
 
 def register():
