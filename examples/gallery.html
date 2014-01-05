@@ -1,0 +1,26 @@
+    <!-- Image Gallery -->
+    <div class="photo-gallery">
+    {% if article is defined%}
+        {% set galleryimages = article.galleryimages %}
+        {% set album = article.album %}
+    {% else %}
+        {% set galleryimages = page.galleryimages %}
+        {% set album = page.album %}
+    {% endif %}
+    {% for image in galleryimages %}
+    {% if imagemax %}{% if loop.index > imagemax %}
+    <br/>
+    View article for more images.{% break %}{% endif %}{% endif %}
+    <div class="gallery-photo">
+	    <a class="{{ album }} cboxElement" data-full-res="{{ image.image }}" href="{{ image.image }}">
+	        <img src="{{ image.thumb }}">
+	    </a>
+	</div>
+    {% endfor %}
+    <script>
+        $('a.cboxElement').colorbox({rel:'cboxElement', transition:"none", width:"85%", height:"85%", title:function () {
+        return "To view full size, " + "click here!".link($(this).attr('data-full-res'))
+}});
+    </script>
+    </div>
+
