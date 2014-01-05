@@ -5,7 +5,6 @@ from pelican import signals
 
 def process_album(albumname):
     username = "dan@zem.org.uk" 
-    albumname = "Gentse Feesten 2013"
     gd_client = gdata.photos.service.PhotosService()
 
 
@@ -28,7 +27,6 @@ def process_album(albumname):
         image = {}
         image['thumb'] = photo.media.thumbnail[1].url
         image['image'] = photo.content.src
-#        print 'Photo title:', photo.title.text, photo.content.src
         galleryimages.append(image)
         
     return galleryimages
@@ -42,8 +40,12 @@ def add_picasa_article(generator):
             article.galleryimages = process_album(albumname)
 
 def add_picasa_page(generator):
-    pass
+    for page in generator.pages:
+        if 'picasa' in page.metadata.keys():
+            albumname = page.metadata.get('picasa')
+            page.album = albumname
+            page.galleryimages = process_album(albumname)
 
 def register():
     signals.article_generator_finalized.connect(add_picasa_article)
-    signals.article_generator_finalized.connect(add_picasa_page)
+    signals.page_generator_finalized.connect(add_picasa_page)
